@@ -11,7 +11,10 @@ WezTerm configuration files.
 ```sh
 # For X11/Wayland:
 cd $XDG_CONFIG_HOME/wezterm
-# For all other systems:
+# Windows:
+cd <WezTermInstallationPath>
+# For all other systems (works on Windows too, but only for single file
+#   configuration):
 cd $HOME/.config/wezterm
 
 git clone <repoUrl> .
