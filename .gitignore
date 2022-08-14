@@ -1,0 +1,5 @@
+# Wezterm system files.
+*.dat
+*.exe
+*.dll
+mesa
