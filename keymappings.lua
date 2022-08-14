@@ -1,28 +1,32 @@
+local wezterm = require('wezterm')
+
+local w_act = wezterm.action
+
 local leader_keymappings = {
   -- * Window management.
   {
     key = "d",
-    action = wezterm.action.CloseCurrentTab({ confirm = false }),
+    action = w_act.CloseCurrentTab({ confirm = false }),
   },
 
   -- * Split management.
   {
     key = "v",
-    action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
+    action = w_act.SplitHorizontal({ domain = "CurrentPaneDomain" }),
   },
   {
     key = "s",
-    action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain" }),
+    action = w_act.SplitVertical({ domain = "CurrentPaneDomain" }),
   },
   {
     key = "x",
-    action = wezterm.action.CloseCurrentPane({ confirm = false }),
+    action = w_act.CloseCurrentPane({ confirm = false }),
   },
 
-  { key = 'Space', mods = 'LEADER', action = wezterm.action.ShowLauncher },
+  { key = 'Space', mods = 'LEADER', action = w_act.ShowLauncher },
   {
     key = 'n',
-    action = wezterm.action.ShowLauncherArgs({
+    action = w_act.ShowLauncherArgs({
       title = 'New Tab',
 
       flags = 'LAUNCH_MENU_ITEMS', -- Items from launch_menu options.
@@ -38,7 +42,7 @@ local leader_keymappings = {
 --     key = tostring(i),
 --     -- TODO: Add a prompt to create a new tab if the tab with specified number
 --     --   doesn't exist.
---     action = wezterm.action_callback(function(win, pane)
+--     action = w_act_callback(function(win, pane)
 --       wezterm.log_info 'Hello from callback!'
 --       -- wezterm.log_info(
 --       --   'WindowID:',
@@ -55,7 +59,7 @@ local keymappings= {
   {
     key = "a",
     mods = "LEADER|CTRL",
-    action = wezterm.action.SendString("\x01"),
+    action = w_act.SendString("\x01"),
   },
   {
     key = '1',
@@ -89,5 +93,4 @@ local function prepare_keymappings(keymappings, leader_keymappings)
   return keymappings
 end
 
-return prepare_keymappings(keymappings, leader_keymappings),
-
+return prepare_keymappings(keymappings, leader_keymappings)
