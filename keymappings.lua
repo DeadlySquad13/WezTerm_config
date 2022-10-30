@@ -2,6 +2,12 @@ local wezterm = require('wezterm')
 
 local w_act = wezterm.action
 
+local ShowLauncherArgs = w_act.ShowLauncherArgs({
+    title = 'New Tab',
+
+    flags = 'LAUNCH_MENU_ITEMS',
+})
+
 local leader_keymappings = {
   -- * Window management.
   {
@@ -26,33 +32,43 @@ local leader_keymappings = {
   { key = 'Space', mods = 'LEADER', action = w_act.ShowLauncher },
   {
     key = 'n',
-    action = w_act.ShowLauncherArgs({
-      title = 'New Tab',
-
-      flags = 'LAUNCH_MENU_ITEMS', -- Items from launch_menu options.
-    })
+    action = ShowLauncherArgs
   },
 
   -- - Navigation.
-
+  {
+    key = "h",
+    action = w_act.ActivatePaneDirection("Left"),
+  },
+  {
+    key = "j",
+    action = w_act.ActivatePaneDirection("Down"),
+  },
+  {
+    key = "k",
+    action = w_act.ActivatePaneDirection("Up"),
+  },
+  {
+    key = "l",
+    action = w_act.ActivatePaneDirection("Right"),
+  },
 }
 
--- for i = 1,7 do
---   table.insert(leader_keymappings, {
---     key = tostring(i),
---     -- TODO: Add a prompt to create a new tab if the tab with specified number
---     --   doesn't exist.
---     action = w_act_callback(function(win, pane)
---       wezterm.log_info 'Hello from callback!'
---       -- wezterm.log_info(
---       --   'WindowID:',
---       --   win:window_id(),
---       --   'PaneID:',
---       --   pane:pane_id()
---       -- )
---     end),
---   })
--- end
+for i = 0,7 do
+  table.insert(leader_keymappings, {
+    key = tostring(i),
+
+    action = wezterm.action_callback(function(window, pane)
+       local tabs = window:mux_window():tabs()
+       if #tabs < i then
+           window:toast_notification('wezterm', 'Tabs does not exist, creating new', nil, 4000)
+           window:perform_action(ShowLauncherArgs, pane)
+       else
+           window:perform_action(w_act.ActivateTab(i), pane)
+       end
+    end),
+  })
+end
 
 local keymappings= {
   -- Send "CTRL-A" to the terminal when pressing CTRL-A, CTRL-A
@@ -60,21 +76,6 @@ local keymappings= {
     key = "a",
     mods = "LEADER|CTRL",
     action = w_act.SendString("\x01"),
-  },
-  {
-    key = '1',
-    mods = "LEADER",
-    -- TODO: Add a prompt to create a new tab if the tab with specified number
-    --   doesn't exist.
-    action = wezterm.action_callback(function(win, pane)
-      wezterm.log_info 'Hello from callback!'
-      -- wezterm.log_info(
-      --   'WindowID:',
-      --   win:window_id(),
-      --   'PaneID:',
-      --   pane:pane_id()
-      -- )
-    end),
   },
 }
 

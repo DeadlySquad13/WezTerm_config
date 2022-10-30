@@ -37,28 +37,28 @@ local SOLID_LEFT_ARROW = '<' --[[ utf8.char(0xe0b2) ]]
 -- The filled in variant of the > symbol
 local SOLID_RIGHT_ARROW = '>' --[[ utf8.char(0xe0b0) ]]
 
-local tab_bar_style = {
-  active_tab_left = wezterm.format {
-    { Background = { Color = '#aa0000' } },
-    { Foreground = { Color = '#2b2042' } },
-    { Text = SOLID_LEFT_ARROW },
-  },
-  active_tab_right = wezterm.format {
-    { Background = { Color = '#0b0022' } },
-    { Foreground = { Color = '#2b2042' } },
-    { Text = SOLID_RIGHT_ARROW },
-  },
-  inactive_tab_left = wezterm.format {
-    { Background = { Color = '#0b0022' } },
-    { Foreground = { Color = '#1b1032' } },
-    { Text = SOLID_LEFT_ARROW },
-  },
-  inactive_tab_right = wezterm.format {
-    { Background = { Color = '#0b0022' } },
-    { Foreground = { Color = '#1b1032' } },
-    { Text = SOLID_RIGHT_ARROW },
-  },
-}
+-- local tab_bar_style = {
+--   active_tab_left = wezterm.format {
+--     { Background = { Color = '#aa0000' } },
+--     { Foreground = { Color = '#2b2042' } },
+--     { Text = SOLID_LEFT_ARROW },
+--   },
+--   active_tab_right = wezterm.format {
+--     { Background = { Color = '#0b0022' } },
+--     { Foreground = { Color = '#2b2042' } },
+--     { Text = SOLID_RIGHT_ARROW },
+--   },
+--   inactive_tab_left = wezterm.format {
+--     { Background = { Color = '#0b0022' } },
+--     { Foreground = { Color = '#1b1032' } },
+--     { Text = SOLID_LEFT_ARROW },
+--   },
+--   inactive_tab_right = wezterm.format {
+--     { Background = { Color = '#0b0022' } },
+--     { Foreground = { Color = '#1b1032' } },
+--     { Text = SOLID_RIGHT_ARROW },
+--   },
+-- }
 
 local tab_bar = {
   -- The color of the strip that goes along the top of the window
@@ -102,5 +102,5 @@ local tab_bar = {
 return {
   window_frame = window_frame,
   tab_bar = tab_bar,
-  tab_bar_style = tab_bar_style,
+  -- tab_bar_style = tab_bar_style,
 }

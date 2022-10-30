@@ -1,7 +1,82 @@
 local wezterm = require("wezterm")
 
-local ui = require('tab_bar_ui')
-local keymappings = require('keymappings')
+local prequire = require('utils').prequire
+
+-- --- Show a notification whenever configuration is reloaded.
+-- ---@ref [example in wezterm documentation](https://wezfurlong.org/wezterm/config/lua/window/toast_notification.html?highlight=message#windowtoast_notificationtitle-message--url-timeout_milliseconds)
+-- wezterm.on('window-config-reloaded', function(window, pane)
+--   window:toast_notification('wezterm', 'configuration reloaded!', nil, 4000)
+-- end)
+
+local ui_is_available, ui = prequire('tab_bar_ui')
+local keymappings_is_available, keymappings = prequire('keymappings')
+local launch_menu_is_available, launch_menu = prequire('launch_menu')
+local wsl_item_utils_is_available, wsl_item_utils = prequire('launch_menu.wsl_item_utils')
+
+local scheme = wezterm.color.get_builtin_schemes()['Atelier Sulphurpool Light (base16)']
+scheme.tab_bar = ui.tab_bar
+
+local config = {
+  -- OpenGL for GPU acceleration, Software for CPU
+  front_end = "OpenGL",
+  -- On each system differs, see https://wezfurlong.org/wezterm/config/lua/config/prefer_egl.html
+  -- prefer_egl = false,
+  max_fps = 240,
+  ratelimit_output_bytes_per_second = 10000000, --[[ 4289999998, ]]
+  default_cursor_style = "SteadyBlock",
+  cursor_blink_ease_in = "Constant",
+  cursor_blink_ease_out = "Constant",
+
+  default_prog = { 'pwsh.exe', '-NoLogo' },
+  -- Set it to [wsl instance](https://wezfurlong.org/wezterm/config/lua/config/default_domain.html) if you use wsl more.
+  default_domain = 'local',
+  launch_menu = launch_menu,
+  tab_and_split_indices_are_zero_based = true, -- Like in tmux.
+
+  leader = { key = 'Space', mods = 'ALT', timeout_mmilliseconds = 1000 },
+  disable_default_key_bindings = false,
+  keys = keymappings,
+
+  font = wezterm.font('Iosevka'),
+  font_size = 10.0,
+
+  window_decorations = "TITLE | RESIZE",--[[ "RESIZE", ]]
+
+  window_padding = {
+    left = 4,
+    right = 4,
+    top = 4,
+    bottom = 0,
+  },
+
+  -- tab_bar_style = ui.tab_bar_style,
+  window_frame = ui.window_frame,
+  hide_tab_bar_if_only_one_tab = false,
+  use_fancy_tab_bar = false,
+
+  -- Defined custom colorscheme.
+  color_schemes = {
+    ['Deadly Atelier Sulphurpool Light (base16)'] = scheme,
+  },
+  color_scheme = 'Deadly Atelier Sulphurpool Light (base16)',
+}
+
+if launch_menu_is_available then
+  if (
+    wsl_item_utils_is_available
+    and wezterm.target_triple == 'x86_64-pc-windows-msvc'
+  ) then
+    wsl_item_utils.load_wsl_distributions_into_launch_menu(launch_menu)
+  end
+  
+  config.launch_menu = launch_menu
+end
+
+-- if not ui_is_available then
+
+
+-- local config = {}
+
 
 -- local mux = wezterm.mux
 
@@ -9,34 +84,6 @@ local keymappings = require('keymappings')
 --   local _, _, window = mux.spawn_window(cmd or {})
 --   window:gui_window():maximize()
 -- end)
-
-local launch_menu = {
-  {
-    label = 'Default Shell',
-    cwd = '~',
-    -- args = { 'top' },
-  },
-  {
-    -- Optional label to show in the launcher. If omitted, a label
-    -- is derived from the `args`
-    label = 'Bash',
-    -- The argument array to spawn.  If omitted the default program
-    -- will be used as described in the documentation above
-    args = { 'bash', '-l' },
-
-    -- You can specify an alternative current working directory;
-    -- if you don't specify one then a default based on the OSC 7
-    -- escape sequence will be used (see the Shell Integration
-    -- docs), falling back to the home directory.
-    -- cwd = "/some/path"
-
-    -- You can override environment variables just for this command
-    -- by setting this here.  It has the same semantics as the main
-    -- set_environment_variables configuration option described above
-    -- set_environment_variables = { FOO = "bar" },
-  },
-}
-
 
 --- Extends a list-like table with the values of another list-like table.
 ---
@@ -62,38 +109,4 @@ local launch_menu = {
 --   return dst
 -- end
 
-
-local scheme = wezterm.color.get_builtin_schemes()['Atelier Sulphurpool Light (base16)']
-scheme.tab_bar = ui.tab_bar
-
-return {
-  default_prog = { [[C:\Windows\System32\wsl.exe]] },
-  launch_menu = launch_menu,
-
-  leader = { key = "Space", mods = "ALT", timeout_mmilliseconds = 1000 },
-  disable_default_key_bindings = false,
-  keys = keymappings,
-
-  font = wezterm.font('Iosevka'),
-  font_size = 10.0,
-
-  window_decorations = "RESIZE",
-
-  window_padding = {
-    left = 5,
-    right = 5,
-    top = 4,
-    bottom = 0,
-  },
-
-  tab_bar_style = ui.tab_bar_style,
-  window_frame = ui.window_frame,
-  hide_tab_bar_if_only_one_tab = true,
-  use_fancy_tab_bar = false,
-
-  -- Defined custom colorscheme.
-  color_schemes = {
-    ['Deadly Atelier Sulphurpool Light (base16)'] = scheme,
-  },
-  color_scheme = 'Deadly Atelier Sulphurpool Light (base16)',
-}
+return config
