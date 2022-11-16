@@ -1,6 +1,30 @@
 local wezterm = require("wezterm")
 
-local prequire = require('utils').prequire
+local prequire = require("utils").prequire
+
+-- Manually set variables.
+-- TODO: Move them to ansible.
+IS_SMALL_SCREEN = true -- On MacOs Notebook.
+IS_WINDOWS = false
+
+local font_size
+if IS_SMALL_SCREEN then
+  font_size = 13
+else
+  font_size = 10
+end
+
+local default_program
+if IS_WINDOWS then
+  default_program = { 'pwsh.exe', '-NoLogo' }
+end
+
+-- Fullscreen on startup.
+local mux = wezterm.mux
+wezterm.on("gui-startup", function(cmd)
+  local tab, pane, window = mux.spawn_window(cmd or {})
+  window:gui_window():toggle_fullscreen()
+end)
 
 -- --- Show a notification whenever configuration is reloaded.
 -- ---@ref [example in wezterm documentation](https://wezfurlong.org/wezterm/config/lua/window/toast_notification.html?highlight=message#windowtoast_notificationtitle-message--url-timeout_milliseconds)
@@ -8,12 +32,12 @@ local prequire = require('utils').prequire
 --   window:toast_notification('wezterm', 'configuration reloaded!', nil, 4000)
 -- end)
 
-local ui_is_available, ui = prequire('tab_bar_ui')
-local keymappings_is_available, keymappings = prequire('keymappings')
-local launch_menu_is_available, launch_menu = prequire('launch_menu')
-local wsl_item_utils_is_available, wsl_item_utils = prequire('launch_menu.wsl_item_utils')
+local ui_is_available, ui = prequire("tab_bar_ui")
+local keymappings_is_available, keymappings = prequire("keymappings")
+local launch_menu_is_available, launch_menu = prequire("launch_menu")
+local wsl_item_utils_is_available, wsl_item_utils = prequire("launch_menu.wsl_item_utils")
 
-local scheme = wezterm.color.get_builtin_schemes()['Atelier Sulphurpool Light (base16)']
+local scheme = wezterm.color.get_builtin_schemes()["Atelier Sulphurpool Light (base16)"]
 scheme.tab_bar = ui.tab_bar
 
 local config = {
@@ -22,25 +46,24 @@ local config = {
   -- On each system differs, see https://wezfurlong.org/wezterm/config/lua/config/prefer_egl.html
   -- prefer_egl = false,
   max_fps = 240,
-  ratelimit_output_bytes_per_second = 10000000, --[[ 4289999998, ]]
   default_cursor_style = "SteadyBlock",
   cursor_blink_ease_in = "Constant",
   cursor_blink_ease_out = "Constant",
 
-  default_prog = { 'pwsh.exe', '-NoLogo' },
+  default_prog = default_program,
   -- Set it to [wsl instance](https://wezfurlong.org/wezterm/config/lua/config/default_domain.html) if you use wsl more.
-  default_domain = 'local',
+  default_domain = "local",
   launch_menu = launch_menu,
   tab_and_split_indices_are_zero_based = true, -- Like in tmux.
 
-  leader = { key = 'Space', mods = 'ALT', timeout_mmilliseconds = 1000 },
+  leader = { key = "Space", mods = "ALT", timeout_mmilliseconds = 1000 },
   disable_default_key_bindings = false,
   keys = keymappings,
 
-  font = wezterm.font('Iosevka'),
-  font_size = 10.0,
+  font = wezterm.font("Iosevka"),
+  font_size = font_size,
 
-  window_decorations = "TITLE | RESIZE",--[[ "RESIZE", ]]
+  window_decorations = "TITLE | RESIZE", --[[ "RESIZE", ]]
 
   window_padding = {
     left = 4,
@@ -56,27 +79,22 @@ local config = {
 
   -- Defined custom colorscheme.
   color_schemes = {
-    ['Deadly Atelier Sulphurpool Light (base16)'] = scheme,
+    ["Deadly Atelier Sulphurpool Light (base16)"] = scheme,
   },
-  color_scheme = 'Deadly Atelier Sulphurpool Light (base16)',
+  color_scheme = "Deadly Atelier Sulphurpool Light (base16)",
 }
 
 if launch_menu_is_available then
-  if (
-    wsl_item_utils_is_available
-    and wezterm.target_triple == 'x86_64-pc-windows-msvc'
-  ) then
+  if wsl_item_utils_is_available and wezterm.target_triple == "x86_64-pc-windows-msvc" then
     wsl_item_utils.load_wsl_distributions_into_launch_menu(launch_menu)
   end
-  
+
   config.launch_menu = launch_menu
 end
 
 -- if not ui_is_available then
 
-
 -- local config = {}
-
 
 -- local mux = wezterm.mux
 
