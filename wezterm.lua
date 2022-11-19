@@ -30,7 +30,10 @@ local config = {
   -- On each system differs, see https://wezfurlong.org/wezterm/config/lua/config/prefer_egl.html
   -- prefer_egl = false,
   max_fps = 240,
-  ratelimit_output_bytes_per_second = 10000000, --[[ 4289999998, ]]
+
+  -- Number of lines per tab.
+  scrollback_lines = 3500,
+
   default_cursor_style = "SteadyBlock",
   cursor_blink_ease_in = "Constant",
   cursor_blink_ease_out = "Constant",
