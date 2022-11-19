@@ -8,6 +8,14 @@ local prequire = require('utils').prequire
 --   window:toast_notification('wezterm', 'configuration reloaded!', nil, 4000)
 -- end)
 
+-- Fullscreen on startup. If you leave fullscreen, stay maximized.
+local mux = wezterm.mux
+wezterm.on("gui-startup", function(cmd)
+  local tab, pane, window = mux.spawn_window(cmd or {})
+  window:gui_window():maximize()
+  window:gui_window():toggle_fullscreen()
+end)
+
 local ui_is_available, ui = prequire('tab_bar_ui')
 local keymappings_is_available, keymappings = prequire('keymappings')
 local launch_menu_is_available, launch_menu = prequire('launch_menu')
@@ -51,7 +59,7 @@ local config = {
 
   -- tab_bar_style = ui.tab_bar_style,
   window_frame = ui.window_frame,
-  hide_tab_bar_if_only_one_tab = false,
+  hide_tab_bar_if_only_one_tab = true,
   use_fancy_tab_bar = false,
 
   -- Defined custom colorscheme.
