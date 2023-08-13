@@ -25,14 +25,17 @@ local scheme = wezterm.color.get_builtin_schemes()['Atelier Sulphurpool Light (b
 scheme.tab_bar = ui.tab_bar
 
 local config = {
-  -- OpenGL for GPU acceleration, Software for CPU
-  front_end = "OpenGL",
+  -- OpenGL for GPU acceleration, Software for CPU, WebGl for better
+  --   but experimental backends (GPU accelerated includes: use
+  --   `wezterm.gui.enumerate_gpus()`)
+  front_end = "WebGpu",
+
   -- On each system differs, see https://wezfurlong.org/wezterm/config/lua/config/prefer_egl.html
   -- prefer_egl = false,
-  max_fps = 240,
+  -- max_fps = 240,
 
   -- Number of lines per tab.
-  scrollback_lines = 3500,
+  -- scrollback_lines = 3500,
 
   default_cursor_style = "SteadyBlock",
   cursor_blink_ease_in = "Constant",
@@ -44,12 +47,16 @@ local config = {
   launch_menu = launch_menu,
   tab_and_split_indices_are_zero_based = true, -- Like in tmux.
 
+  window_close_confirmation = 'NeverPrompt',
+
   leader = { key = 'Space', mods = 'ALT', timeout_mmilliseconds = 1000 },
   disable_default_key_bindings = false,
+  -- key_map_preference = "Physical",
   keys = keymappings,
 
   font = wezterm.font('Iosevka'),
-  font_size = 10.0,
+  -- font = wezterm.font('Cascadia Code'),
+  font_size = 9.0,
 
   window_decorations = "TITLE | RESIZE",--[[ "RESIZE", ]]
 
@@ -82,19 +89,6 @@ if launch_menu_is_available then
   
   config.launch_menu = launch_menu
 end
-
--- if not ui_is_available then
-
-
--- local config = {}
-
-
--- local mux = wezterm.mux
-
--- wezterm.on("gui-startup", function(cmd)
---   local _, _, window = mux.spawn_window(cmd or {})
---   window:gui_window():maximize()
--- end)
 
 --- Extends a list-like table with the values of another list-like table.
 ---
