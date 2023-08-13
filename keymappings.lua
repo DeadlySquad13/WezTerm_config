@@ -8,10 +8,11 @@ local ShowLauncherArgs = w_act.ShowLauncherArgs({
     flags = 'LAUNCH_MENU_ITEMS',
 })
 
+local PANE_SELECT_ALPHABET = "dfjkasl;'"
 local leader_keymappings = {
   -- * Window management.
   {
-    key = "d",
+    key = "q",
     action = w_act.CloseCurrentTab({ confirm = false }),
   },
 
@@ -28,8 +29,22 @@ local leader_keymappings = {
     key = "x",
     action = w_act.CloseCurrentPane({ confirm = false }),
   },
-
-  { key = 'Space', mods = 'LEADER', action = w_act.ShowLauncher },
+  -- Activate pane selection mode.
+  {
+    key = 'o',
+    action = w_act.PaneSelect({
+      alphabet = PANE_SELECT_ALPHABET,
+    }),
+  },
+  -- Show the pane selection mode, but have it swap the active and selected panes.
+  {
+    key = 'p',
+    action = w_act.PaneSelect({
+      mode = 'SwapWithActive',
+      alphabet = PANE_SELECT_ALPHABET,
+    }),
+  },
+  { key = 'Space', action = w_act.ShowLauncher },
   {
     key = 'n',
     action = ShowLauncherArgs
@@ -70,28 +85,40 @@ for i = 0,7 do
   })
 end
 
-local keymappings= {
-  -- Send "CTRL-A" to the terminal when pressing CTRL-A, CTRL-A
-  {
-    key = "a",
-    mods = "LEADER|CTRL",
-    action = w_act.SendString("\x01"),
-  },
-}
-
--- Prepends LEADER to every leader_keymapping.
-local function prepare_keymappings(keymappings, leader_keymappings)
+local function prepend_leader_to_keymappings(leader_keymappings)
   for _, leader_keymapping in ipairs(leader_keymappings) do
     if leader_keymapping.mods then
       leader_keymapping.mods = 'LEADER' .. '|' .. leader_keymapping.mods
     else
       leader_keymapping.mods = 'LEADER'
     end
+  end
 
+  return leader_keymappings
+end
+
+leader_keymappings = prepend_leader_to_keymappings(leader_keymappings)
+
+local keymappings= {
+  -- Send "CTRL-A" to the terminal when pressing CTRL-B, CTRL-B
+  {
+    -- FIX: Somehow only this keymapping has to be physical. It it's a common
+    -- issue for keymappings, it has to be solved.
+    key = "phys:v",
+    mods = "CTRL",
+    action = w_act.PasteFrom("Clipboard")
+  },
+}
+
+local function merge_keymappings(keymappings, leader_keymappings)
+  for _, leader_keymapping in ipairs(leader_keymappings) do
     table.insert(keymappings, leader_keymapping)
   end
 
   return keymappings
 end
 
-return prepare_keymappings(keymappings, leader_keymappings)
+return merge_keymappings(
+  keymappings,
+  leader_keymappings
+)
