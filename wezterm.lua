@@ -1,11 +1,10 @@
 local wezterm = require("wezterm")
 
-local prequire = require("utils").prequire
+local utils = require('utils')
+local env = require('env')
+local prequire = utils.prequire
 
--- Manually set variables.
--- TODO: Move them to ansible.
-IS_SMALL_SCREEN = true -- On MacOs Notebook.
-IS_WINDOWS = false
+local IS_SMALL_SCREEN = env.IS_DARWIN -- On MacOs Notebook.
 
 local font_size
 if IS_SMALL_SCREEN then
@@ -96,7 +95,7 @@ local config = {
   cursor_blink_ease_in = "Constant",
   cursor_blink_ease_out = "Constant",
 
-  default_prog = wezterm.target_triple == 'x86_64-pc-windows-msvc' and { 'pwsh.exe', '-NoLogo' } or { 'bash' },
+  default_prog = env.IS_WINDOWS and { 'pwsh.exe', '-NoLogo' } or { 'bash' },
   -- Set it to [wsl instance](https://wezfurlong.org/wezterm/config/lua/config/default_domain.html) if you use wsl more.
   -- default_domain = 'local',
   tab_and_split_indices_are_zero_based = true, -- Like in tmux.

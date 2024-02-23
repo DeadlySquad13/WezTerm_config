@@ -1,6 +1,8 @@
 local wezterm = require('wezterm')
 
-local function prequire(module_name)
+local M = {}
+
+M.prequire = function(module_name)
   local module_loading_error_handler = function(error)
       wezterm.log_info(
         'Error in loading module ' .. module_name .. '!',
@@ -21,6 +23,16 @@ local function prequire(module_name)
   return status_ok, module
 end
 
-return {
-  prequire = prequire,
-}
+M.is_linux = function()
+	return wezterm.target_triple:find("linux") ~= nil
+end
+
+M.is_darwin = function()
+	return wezterm.target_triple:find("darwin") ~= nil
+end
+
+M.is_windows = function()
+	return wezterm.target_triple == "x86_64-pc-windows-msvc"
+end
+
+return M
