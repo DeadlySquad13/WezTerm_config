@@ -19,13 +19,6 @@ if IS_WINDOWS then
   default_program = { 'pwsh.exe', '-NoLogo' }
 end
 
--- Fullscreen on startup.
-local mux = wezterm.mux
-wezterm.on("gui-startup", function(cmd)
-  local tab, pane, window = mux.spawn_window(cmd or {})
-  window:gui_window():toggle_fullscreen()
-end)
-
 -- --- Show a notification whenever configuration is reloaded.
 -- ---@ref [example in wezterm documentation](https://wezfurlong.org/wezterm/config/lua/window/toast_notification.html?highlight=message#windowtoast_notificationtitle-message--url-timeout_milliseconds)
 -- wezterm.on('window-config-reloaded', function(window, pane)
@@ -37,8 +30,6 @@ local keymappings_is_available, keymappings = prequire("keymappings")
 local launch_menu_is_available, launch_menu = prequire("launch_menu")
 local wsl_item_utils_is_available, wsl_item_utils = prequire("launch_menu.wsl_item_utils")
 
-local scheme = wezterm.color.get_builtin_schemes()["Atelier Sulphurpool Light (base16)"]
-scheme.tab_bar = ui.tab_bar
 -- Fullscreen on startup. If you leave fullscreen, stay maximized.
 local mux = wezterm.mux
 wezterm.on("gui-startup", function(cmd)
