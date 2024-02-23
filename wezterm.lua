@@ -1,12 +1,33 @@
 local wezterm = require("wezterm")
 
-local prequire = require('utils').prequire
+local utils = require('utils')
+local env = require('env')
+local prequire = utils.prequire
+
+local IS_SMALL_SCREEN = env.IS_DARWIN -- On MacOs Notebook.
+
+local font_size
+if IS_SMALL_SCREEN then
+  font_size = 13
+else
+  font_size = 10
+end
+
+local default_program
+if env.IS_WINDOWS then
+  default_program = { 'pwsh.exe', '-NoLogo' }
+end
 
 -- --- Show a notification whenever configuration is reloaded.
 -- ---@ref [example in wezterm documentation](https://wezfurlong.org/wezterm/config/lua/window/toast_notification.html?highlight=message#windowtoast_notificationtitle-message--url-timeout_milliseconds)
 -- wezterm.on('window-config-reloaded', function(window, pane)
 --   window:toast_notification('wezterm', 'configuration reloaded!', nil, 4000)
 -- end)
+
+local ui_is_available, ui = prequire("tab_bar_ui")
+local keymappings_is_available, keymappings = prequire("keymappings")
+local launch_menu_is_available, launch_menu = prequire("launch_menu")
+local wsl_item_utils_is_available, wsl_item_utils = prequire("launch_menu.wsl_item_utils")
 
 -- Fullscreen on startup. If you leave fullscreen, stay maximized.
 local mux = wezterm.mux
@@ -61,7 +82,7 @@ local config = {
   -- OpenGL for GPU acceleration, Software for CPU, WebGl for better
   --   but experimental backends (GPU accelerated includes: use
   --   `wezterm.gui.enumerate_gpus()`)
-  front_end = "WebGpu",
+  -- front_end = "WebGpu",
 
   -- On each system differs, see https://wezfurlong.org/wezterm/config/lua/config/prefer_egl.html
   -- prefer_egl = false,
@@ -74,7 +95,7 @@ local config = {
   cursor_blink_ease_in = "Constant",
   cursor_blink_ease_out = "Constant",
 
-  default_prog = wezterm.target_triple == 'x86_64-pc-windows-msvc' and { 'pwsh.exe', '-NoLogo' } or { 'bash' },
+  default_prog = env.IS_WINDOWS and { 'pwsh.exe', '-NoLogo' } or { 'bash' },
   -- Set it to [wsl instance](https://wezfurlong.org/wezterm/config/lua/config/default_domain.html) if you use wsl more.
   -- default_domain = 'local',
   tab_and_split_indices_are_zero_based = true, -- Like in tmux.
@@ -86,16 +107,16 @@ local config = {
   -- key_map_preference = "Physical",
   keys = keymappings,
 
-  font = wezterm.font('Iosevka NFM'),
-  -- font = wezterm.font('Cascadia Code'),
-  font_size = 11.0,
+  font = wezterm.font("Iosevka"),
+  font_size = font_size,
+  -- harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' }, -- Disable ligatures in most fonts.
 
-  window_decorations = "TITLE | RESIZE",--[[ "RESIZE", ]]
+  window_decorations = "TITLE | RESIZE", --[[ "RESIZE", ]]
 
   window_padding = {
-    left = 4,
-    right = 4,
-    top = 4,
+    left = 0,
+    right = 0,
+    top = 0,
     bottom = 0,
   },
 
@@ -109,11 +130,10 @@ local config = {
   color_scheme = 'Deadly Belafonte Day',
 }
 
+-- ?: As far as I remember, items weren't loaded into launch menu when this
+-- code chunk was placed in module.
 if launch_menu_is_available then
-  if (
-    wsl_item_utils_is_available
-    and wezterm.target_triple == 'x86_64-pc-windows-msvc'
-  ) then
+  if wsl_item_utils_is_available and env.IS_WINDOWS then
     wsl_item_utils.load_wsl_distributions_into_launch_menu(launch_menu)
   end
 

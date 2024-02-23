@@ -1,11 +1,10 @@
-local wezterm = require('wezterm')
-
+local env = require('env')
 local windows_items = require('launch_menu.windows_items')
 local unix_items = require('launch_menu.unix_items')
 
 local launch_menu = {}
 
-if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
+if env.IS_WINDOWS then
   -- Can't get wsl items here for some reason.
   --   Seems like a problem with spawning process.
   for _, item in ipairs(windows_items) do
