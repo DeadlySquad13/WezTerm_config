@@ -17,5 +17,4 @@ else
   end
 end
 
-
 return launch_menu

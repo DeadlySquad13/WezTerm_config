@@ -10,6 +10,11 @@ return {
     domain = { DomainName = 'local' },
   },
   {
+    label = 'PowerShell (Elevated)',
+    args = { 'eledo.exe', 'pwsh.exe', '-NoLogo' },
+    domain = { DomainName = 'local' },
+  },
+  {
     label = 'Cmd',
     args = { 'cmd.exe' },
     domain = { DomainName = 'local' },

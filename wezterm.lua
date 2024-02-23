@@ -39,25 +39,82 @@ local wsl_item_utils_is_available, wsl_item_utils = prequire("launch_menu.wsl_it
 
 local scheme = wezterm.color.get_builtin_schemes()["Atelier Sulphurpool Light (base16)"]
 scheme.tab_bar = ui.tab_bar
+-- Fullscreen on startup. If you leave fullscreen, stay maximized.
+local mux = wezterm.mux
+wezterm.on("gui-startup", function(cmd)
+  local tab, pane, window = mux.spawn_window(cmd or {})
+  window:gui_window():maximize()
+  window:gui_window():toggle_fullscreen()
+end)
+
+local ui_is_available, ui = prequire('tab_bar_ui')
+local keymappings_is_available, keymappings = prequire('keymappings')
+local launch_menu_is_available, launch_menu = prequire('launch_menu')
+local wsl_item_utils_is_available, wsl_item_utils = prequire('launch_menu.wsl_item_utils')
+
+local function tbl_extend(a, b)
+    for k, v in pairs(b) do
+        a[k] = v
+    end
+
+    return a
+end
+
+local scheme_modifications = {
+    ['Atelier Sulphurpool Light (base16)'] = { tab_bar = ui.tab_bar },
+    ['Belafonte Day'] = {
+        tab_bar = ui.tab_bar, -- TODO: adapt background for this theme.
+        background = "#EDE2CC",
+        -- ansi = {
+        --     [0] = "#7C6F64",
+        -- },
+    },
+}
+
+local function apply_builtin_scheme_modifications(scheme_modifications)
+    local personal_schemes = {}
+
+    for scheme_name, modification in pairs(scheme_modifications) do
+        local builtin_scheme = wezterm.color.get_builtin_schemes()[scheme_name]
+        -- print(scheme_name)
+        -- print(builtin_scheme)
+
+        -- TODO: Needs deep extend.
+        personal_schemes['Deadly ' .. scheme_name] = tbl_extend(builtin_scheme, modification)
+    end
+
+    return personal_schemes
+end
+
+local personal_schemes = apply_builtin_scheme_modifications(scheme_modifications)
 
 local config = {
-  -- OpenGL for GPU acceleration, Software for CPU
-  front_end = "OpenGL",
+  -- OpenGL for GPU acceleration, Software for CPU, WebGl for better
+  --   but experimental backends (GPU accelerated includes: use
+  --   `wezterm.gui.enumerate_gpus()`)
+  -- front_end = "WebGpu",
+
   -- On each system differs, see https://wezfurlong.org/wezterm/config/lua/config/prefer_egl.html
   -- prefer_egl = false,
-  max_fps = 240,
+  -- max_fps = 240,
+
+  -- Number of lines per tab.
+  -- scrollback_lines = 3500,
+
   default_cursor_style = "SteadyBlock",
   cursor_blink_ease_in = "Constant",
   cursor_blink_ease_out = "Constant",
 
-  default_prog = default_program,
+  default_prog = wezterm.target_triple == 'x86_64-pc-windows-msvc' and { 'pwsh.exe', '-NoLogo' } or { 'bash' },
   -- Set it to [wsl instance](https://wezfurlong.org/wezterm/config/lua/config/default_domain.html) if you use wsl more.
-  default_domain = "local",
-  launch_menu = launch_menu,
+  -- default_domain = 'local',
   tab_and_split_indices_are_zero_based = true, -- Like in tmux.
 
-  leader = { key = "Space", mods = "ALT", timeout_mmilliseconds = 1000 },
+  window_close_confirmation = 'NeverPrompt',
+
+  leader = { key = 'Space', mods = 'ALT', timeout_mmilliseconds = 1000 },
   disable_default_key_bindings = false,
+  -- key_map_preference = "Physical",
   keys = keymappings,
 
   font = wezterm.font("Iosevka"),
@@ -74,14 +131,12 @@ local config = {
 
   -- tab_bar_style = ui.tab_bar_style,
   window_frame = ui.window_frame,
-  hide_tab_bar_if_only_one_tab = false,
+  hide_tab_bar_if_only_one_tab = true,
   use_fancy_tab_bar = false,
 
   -- Defined custom colorscheme.
-  color_schemes = {
-    ["Deadly Atelier Sulphurpool Light (base16)"] = scheme,
-  },
-  color_scheme = "Deadly Atelier Sulphurpool Light (base16)",
+  color_schemes = personal_schemes,
+  color_scheme = 'Deadly Belafonte Day',
 }
 
 if launch_menu_is_available then
@@ -91,17 +146,6 @@ if launch_menu_is_available then
 
   config.launch_menu = launch_menu
 end
-
--- if not ui_is_available then
-
--- local config = {}
-
--- local mux = wezterm.mux
-
--- wezterm.on("gui-startup", function(cmd)
---   local _, _, window = mux.spawn_window(cmd or {})
---   window:gui_window():maximize()
--- end)
 
 --- Extends a list-like table with the values of another list-like table.
 ---
