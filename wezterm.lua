@@ -41,10 +41,9 @@ local config = {
   cursor_blink_ease_in = "Constant",
   cursor_blink_ease_out = "Constant",
 
-  default_prog = { 'pwsh.exe', '-NoLogo' },
+  default_prog = wezterm.target_triple == 'x86_64-pc-windows-msvc' and { 'pwsh.exe', '-NoLogo' } or { 'bash' },
   -- Set it to [wsl instance](https://wezfurlong.org/wezterm/config/lua/config/default_domain.html) if you use wsl more.
-  default_domain = 'local',
-  launch_menu = launch_menu,
+  -- default_domain = 'local',
   tab_and_split_indices_are_zero_based = true, -- Like in tmux.
 
   window_close_confirmation = 'NeverPrompt',
@@ -54,9 +53,9 @@ local config = {
   -- key_map_preference = "Physical",
   keys = keymappings,
 
-  font = wezterm.font('Iosevka'),
+  font = wezterm.font('Iosevka NFM'),
   -- font = wezterm.font('Cascadia Code'),
-  font_size = 9.0,
+  font_size = 11.0,
 
   window_decorations = "TITLE | RESIZE",--[[ "RESIZE", ]]
 
@@ -86,7 +85,7 @@ if launch_menu_is_available then
   ) then
     wsl_item_utils.load_wsl_distributions_into_launch_menu(launch_menu)
   end
-  
+
   config.launch_menu = launch_menu
 end
 
