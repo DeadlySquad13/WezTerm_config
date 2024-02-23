@@ -14,7 +14,7 @@ else
 end
 
 local default_program
-if IS_WINDOWS then
+if env.IS_WINDOWS then
   default_program = { 'pwsh.exe', '-NoLogo' }
 end
 
@@ -130,8 +130,10 @@ local config = {
   color_scheme = 'Deadly Belafonte Day',
 }
 
+-- ?: As far as I remember, items weren't loaded into launch menu when this
+-- code chunk was placed in module.
 if launch_menu_is_available then
-  if wsl_item_utils_is_available and wezterm.target_triple == "x86_64-pc-windows-msvc" then
+  if wsl_item_utils_is_available and env.IS_WINDOWS then
     wsl_item_utils.load_wsl_distributions_into_launch_menu(launch_menu)
   end
 
