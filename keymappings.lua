@@ -8,7 +8,7 @@ local ShowLauncherArgs = w_act.ShowLauncherArgs({
     flags = 'LAUNCH_MENU_ITEMS',
 })
 
-local PANE_SELECT_ALPHABET = "dfjkasl;'"
+local PANE_SELECT_ALPHABET = "ntaesirh"
 local leader_keymappings = {
   -- * Window management.
   {
@@ -18,11 +18,11 @@ local leader_keymappings = {
 
   -- * Split management.
   {
-    key = "v",
+    key = "h",
     action = w_act.SplitHorizontal({ domain = "CurrentPaneDomain" }),
   },
   {
-    key = "s",
+    key = "l",
     action = w_act.SplitVertical({ domain = "CurrentPaneDomain" }),
   },
   {
@@ -46,7 +46,7 @@ local leader_keymappings = {
   },
   { key = 'Space', action = w_act.ShowLauncher },
   {
-    key = 'n',
+    key = "c", -- "Create" like create new window in tmux.
     action = ShowLauncherArgs
   },
 
