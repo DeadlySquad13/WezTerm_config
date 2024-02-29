@@ -56,9 +56,13 @@ local scheme_modifications = {
     ['Belafonte Day'] = {
         tab_bar = ui.tab_bar, -- TODO: adapt background for this theme.
         background = "#EDE2CC",
-        -- ansi = {
-        --     [0] = "#7C6F64",
-        -- },
+        foreground = "#45363B",
+        selection_fg = "#EDE2CC",
+        selection_bg = "#958B83",
+        ansi = {
+            [1] = "#7C6F64",
+        }
+        -- selection_foreground = "#D4CCB9",
     },
 }
 
@@ -71,6 +75,13 @@ local function apply_builtin_scheme_modifications(scheme_modifications)
         -- print(builtin_scheme)
 
         -- TODO: Needs deep extend.
+        -- personal_schemes['Deadly ' .. scheme_name] = tbl_extend(builtin_scheme, modification)
+        -- modification.ansi = tbl_extend(builtin_scheme.ansi, modification.ansi)
+        if modification.ansi then
+            for i, _ in pairs(builtin_scheme.ansi) do
+                modification.ansi[i] = modification.ansi[i] or builtin_scheme.ansi[i]
+            end
+        end
         personal_schemes['Deadly ' .. scheme_name] = tbl_extend(builtin_scheme, modification)
     end
 
