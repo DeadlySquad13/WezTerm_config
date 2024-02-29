@@ -52,19 +52,19 @@ local leader_keymappings = {
 
   -- - Navigation.
   {
-    key = "h",
+    key = "s",
     action = w_act.ActivatePaneDirection("Left"),
   },
   {
-    key = "j",
+    key = "n",
     action = w_act.ActivatePaneDirection("Down"),
   },
   {
-    key = "k",
+    key = "m",
     action = w_act.ActivatePaneDirection("Up"),
   },
   {
-    key = "l",
+    key = "t",
     action = w_act.ActivatePaneDirection("Right"),
   },
 }
