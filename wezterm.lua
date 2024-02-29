@@ -29,11 +29,12 @@ local keymappings_is_available, keymappings = prequire("keymappings")
 local launch_menu_is_available, launch_menu = prequire("launch_menu")
 local wsl_item_utils_is_available, wsl_item_utils = prequire("launch_menu.wsl_item_utils")
 
--- Fullscreen on startup. If you leave fullscreen, stay maximized.
+-- Fullscreen on startup.
 local mux = wezterm.mux
 wezterm.on("gui-startup", function(cmd)
   local tab, pane, window = mux.spawn_window(cmd or {})
-  window:gui_window():maximize()
+  -- If you leave fullscreen, stay maximized. Removed because of komorebi.
+  -- window:gui_window():maximize()
   window:gui_window():toggle_fullscreen()
 end)
 
@@ -115,7 +116,7 @@ local config = {
 
   leader = { key = 'Space', mods = 'ALT', timeout_mmilliseconds = 1000 },
   disable_default_key_bindings = false,
-  -- key_map_preference = "Physical",
+  -- key_map_preference = "Physical", -- Ctrl+Key doesn't work in vim with custom layout on windows.
   keys = keymappings,
 
   font = wezterm.font("Iosevka"),
