@@ -38,11 +38,6 @@ wezterm.on("gui-startup", function(cmd)
   window:gui_window():toggle_fullscreen()
 end)
 
-local ui_is_available, ui = prequire('tab_bar_ui')
-local keymappings_is_available, keymappings = prequire('keymappings')
-local launch_menu_is_available, launch_menu = prequire('launch_menu')
-local wsl_item_utils_is_available, wsl_item_utils = prequire('launch_menu.wsl_item_utils')
-
 local function tbl_extend(a, b)
     for k, v in pairs(b) do
         a[k] = v
@@ -90,57 +85,58 @@ end
 
 local personal_schemes = apply_builtin_scheme_modifications(scheme_modifications)
 
-local config = {
-  -- OpenGL for GPU acceleration, Software for CPU, WebGl for better
-  --   but experimental backends (GPU accelerated includes: use
-  --   `wezterm.gui.enumerate_gpus()`)
-  -- front_end = "WebGpu",
+local config = wezterm.config_builder()
+-- OpenGL for GPU acceleration, Software for CPU, WebGl for better
+--   but experimental backends (GPU accelerated includes: use
+--   `wezterm.gui.enumerate_gpus()`)
+-- front_end = "WebGpu",
 
-  -- On each system differs, see https://wezfurlong.org/wezterm/config/lua/config/prefer_egl.html
-  -- prefer_egl = false,
-  -- max_fps = 240,
+-- On each system differs, see https://wezfurlong.org/wezterm/config/lua/config/prefer_egl.html
+-- prefer_egl = false,
+-- max_fps = 240,
 
-  -- Number of lines per tab.
-  -- scrollback_lines = 3500,
+-- Number of lines per tab.
+-- scrollback_lines = 3500,
+config.default_cursor_style = "SteadyBlock"
+config.cursor_blink_ease_in = "Constant"
+config.cursor_blink_ease_out = "Constant"
 
-  default_cursor_style = "SteadyBlock",
-  cursor_blink_ease_in = "Constant",
-  cursor_blink_ease_out = "Constant",
+config.default_prog = env.IS_WINDOWS and { 'pwsh.exe', '-NoLogo' } or { 'bash' }
+-- Set it to [wsl instance](https://wezfurlong.org/wezterm/config/lua/config/default_domain.html) if you use wsl more.
+-- config.default_domain = 'local'
+config.tab_and_split_indices_are_zero_based = true -- Like in tmux.
 
-  default_prog = env.IS_WINDOWS and { 'pwsh.exe', '-NoLogo' } or { 'bash' },
-  -- Set it to [wsl instance](https://wezfurlong.org/wezterm/config/lua/config/default_domain.html) if you use wsl more.
-  -- default_domain = 'local',
-  tab_and_split_indices_are_zero_based = true, -- Like in tmux.
+config.window_close_confirmation = 'NeverPrompt'
 
-  window_close_confirmation = 'NeverPrompt',
+config.leader = { key = 'Space', mods = 'ALT', timeout_mmilliseconds = 1000 }
+config.disable_default_key_bindings = false
+-- config.key_map_preference = "Physical" -- Ctrl+Key doesn't work in vim with custom layout on windows.
+config.keys = keymappings
 
-  leader = { key = 'Space', mods = 'ALT', timeout_mmilliseconds = 1000 },
-  disable_default_key_bindings = false,
-  -- key_map_preference = "Physical", -- Ctrl+Key doesn't work in vim with custom layout on windows.
-  keys = keymappings,
+print(require('capture_scrollback'))
+-- config.keys = require('capture_scrollback').keys
 
-  font = wezterm.font("Iosevka"),
-  font_size = font_size,
-  -- harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' }, -- Disable ligatures in most fonts.
+config.font = wezterm.font("Iosevka")
+config.font_size = font_size
+-- config.harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' } -- Disable ligatures in most fonts.
 
-  window_decorations = "TITLE | RESIZE", --[[ "RESIZE", ]]
+config.window_decorations = "TITLE | RESIZE" --[[ "RESIZE", ]]
 
-  window_padding = {
-    left = 0,
-    right = 0,
-    top = 0,
-    bottom = 0,
-  },
+config.window_padding = {
+  left = 0,
+  right = 0,
+  top = 0,
+  bottom = 0,
+}
 
   -- tab_bar_style = ui.tab_bar_style,
-  window_frame = ui.window_frame,
-  hide_tab_bar_if_only_one_tab = true,
-  use_fancy_tab_bar = false,
+config.window_frame = ui.window_frame
+config.hide_tab_bar_if_only_one_tab = true
+config.use_fancy_tab_bar = false
 
   -- Defined custom colorscheme.
-  color_schemes = personal_schemes,
-  color_scheme = 'Deadly Belafonte Day',
-}
+config.color_schemes = personal_schemes
+config.color_scheme = 'Deadly Belafonte Day'
 
 -- ?: As far as I remember, items weren't loaded into launch menu when this
 -- code chunk was placed in module.
