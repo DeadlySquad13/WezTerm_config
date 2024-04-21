@@ -10,7 +10,7 @@ local font_size
 if IS_SMALL_SCREEN then
   font_size = 13
 else
-  font_size = 10
+  font_size = 12
 end
 
 local default_program
@@ -145,20 +145,6 @@ if launch_menu_is_available then
 
   config.launch_menu = launch_menu
 end
-
---[[ wezterm.on('user-var-changed', function(window, pane, name, value)
-  local overrides = window:get_config_overrides() or {}
-  if name == "ZEN_MODE" then
-     if value == "on" then
-       overrides.font_size = 18
-     else
-       overrides.font_size = nil
-    end
-  end
-  window:set_config_overrides(overrides)  
-end)
-]]
-
 
 
 --- Extends a list-like table with the values of another list-like table.
