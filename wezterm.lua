@@ -111,10 +111,8 @@ config.window_close_confirmation = 'NeverPrompt'
 config.leader = { key = 'Space', mods = 'ALT', timeout_mmilliseconds = 1000 }
 config.disable_default_key_bindings = false
 -- config.key_map_preference = "Physical" -- Ctrl+Key doesn't work in vim with custom layout on windows.
-config.keys = keymappings
 
-print(require('capture_scrollback'))
--- config.keys = require('capture_scrollback').keys
+config.keys = keymappings
 
 config.font = wezterm.font("Iosevka")
 config.font_size = font_size
@@ -148,6 +146,21 @@ if launch_menu_is_available then
   config.launch_menu = launch_menu
 end
 
+--[[ wezterm.on('user-var-changed', function(window, pane, name, value)
+  local overrides = window:get_config_overrides() or {}
+  if name == "ZEN_MODE" then
+     if value == "on" then
+       overrides.font_size = 18
+     else
+       overrides.font_size = nil
+    end
+  end
+  window:set_config_overrides(overrides)  
+end)
+]]
+
+
+
 --- Extends a list-like table with the values of another list-like table.
 ---
 --- NOTE: This mutates dst!
@@ -171,5 +184,11 @@ end
 --   end
 --   return dst
 -- end
+
+
+local capture_scrollback_is_available, capture_scrollback = prequire('capture_scrollback')
+if capture_scrollback_is_available then
+  capture_scrollback.apply_to_config(config)
+end
 
 return config
