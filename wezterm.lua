@@ -13,11 +13,6 @@ else
   font_size = 12
 end
 
-local default_program
-if env.IS_WINDOWS then
-  default_program = { 'pwsh.exe', '-NoLogo' }
-end
-
 -- --- Show a notification whenever configuration is reloaded.
 -- ---@ref [example in wezterm documentation](https://wezfurlong.org/wezterm/config/lua/window/toast_notification.html?highlight=message#windowtoast_notificationtitle-message--url-timeout_milliseconds)
 -- wezterm.on('window-config-reloaded', function(window, pane)
@@ -101,7 +96,9 @@ config.default_cursor_style = "SteadyBlock"
 config.cursor_blink_ease_in = "Constant"
 config.cursor_blink_ease_out = "Constant"
 
-config.default_prog = env.IS_WINDOWS and { 'pwsh.exe', '-NoLogo' } or { 'bash' }
+-- nil = default login shell. Works only on Unix.
+-- Reference: https://wezfurlong.org/wezterm/config/launch.html#changing-the-default-program
+config.default_prog = env.IS_WINDOWS and { 'pwsh.exe', '-NoLogo' } or nil
 -- Set it to [wsl instance](https://wezfurlong.org/wezterm/config/lua/config/default_domain.html) if you use wsl more.
 -- config.default_domain = 'local'
 config.tab_and_split_indices_are_zero_based = true -- Like in tmux.
