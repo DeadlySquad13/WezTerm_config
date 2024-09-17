@@ -100,12 +100,9 @@ end
 leader_keymappings = prepend_leader_to_keymappings(leader_keymappings)
 
 local keymappings = {
-  -- Send "CTRL-A" to the terminal when pressing CTRL-B, CTRL-B
   {
-    -- FIX: Somehow only this keymapping has to be physical. It it's a common
-    -- issue for keymappings, it has to be solved.
-    key = "phys:v",
-    mods = "CTRL",
+    key = "v",
+    mods = "CTRL|SHIFT",
     action = w_act.PasteFrom("Clipboard")
   },
 }
