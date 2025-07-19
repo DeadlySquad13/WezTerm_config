@@ -3,9 +3,9 @@ local wezterm = require('wezterm')
 local w_act = wezterm.action
 
 local ShowLauncherArgs = w_act.ShowLauncherArgs({
-    title = 'New Tab',
+  title = 'New Tab',
 
-    flags = 'LAUNCH_MENU_ITEMS',
+  flags = 'LAUNCH_MENU_ITEMS',
 })
 
 local PANE_SELECT_ALPHABET = "ntaesirh"
@@ -69,18 +69,18 @@ local leader_keymappings = {
   },
 }
 
-for i = 0,7 do
+for i = 0, 7 do
   table.insert(leader_keymappings, {
     key = tostring(i),
 
     action = wezterm.action_callback(function(window, pane)
-       local tabs = window:mux_window():tabs()
-       if #tabs < i then
-           window:toast_notification('wezterm', 'Tabs does not exist, creating new', nil, 4000)
-           window:perform_action(ShowLauncherArgs, pane)
-       else
-           window:perform_action(w_act.ActivateTab(i), pane)
-       end
+      local tabs = window:mux_window():tabs()
+      if #tabs < i then
+        window:toast_notification('wezterm', 'Tabs does not exist, creating new', nil, 4000)
+        window:perform_action(ShowLauncherArgs, pane)
+      else
+        window:perform_action(w_act.ActivateTab(i), pane)
+      end
     end),
   })
 end
@@ -104,6 +104,11 @@ local keymappings = {
     key = "v",
     mods = "CTRL|SHIFT",
     action = w_act.PasteFrom("Clipboard")
+  },
+  {
+    key = "v",
+    mods = "CTRL",
+    action = w_act.Nop,
   },
 }
 

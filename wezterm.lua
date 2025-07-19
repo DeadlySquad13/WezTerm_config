@@ -88,7 +88,7 @@ local config = wezterm.config_builder()
 
 -- On each system differs, see https://wezfurlong.org/wezterm/config/lua/config/prefer_egl.html
 -- prefer_egl = false,
--- max_fps = 240,
+-- config.max_fps = 120
 
 -- Number of lines per tab.
 -- scrollback_lines = 3500,
@@ -107,7 +107,6 @@ config.window_close_confirmation = 'NeverPrompt'
 
 config.leader = { key = 'Space', mods = 'ALT', timeout_mmilliseconds = 1000 }
 config.disable_default_key_bindings = false
--- config.key_map_preference = "Physical" -- Ctrl+Key doesn't work in vim with custom layout on windows.
 
 config.keys = keymappings
 
