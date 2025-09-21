@@ -142,6 +142,9 @@ if launch_menu_is_available then
   config.launch_menu = launch_menu
 end
 
+-- Fixes issue with "ssh-agent not found" on Windows. But this option is
+-- available only on wezterm-nightly.
+config.mux_enable_ssh_agent = false
 
 --- Extends a list-like table with the values of another list-like table.
 ---
