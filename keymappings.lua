@@ -105,11 +105,6 @@ local keymappings = {
     mods = "CTRL|SHIFT",
     action = w_act.PasteFrom("Clipboard")
   },
-  {
-    key = "v",
-    mods = "CTRL",
-    action = w_act.Nop,
-  },
 }
 
 local function merge_keymappings(keymappings, leader_keymappings)
