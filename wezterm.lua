@@ -24,14 +24,7 @@ local keymappings_is_available, keymappings = prequire("keymappings")
 local launch_menu_is_available, launch_menu = prequire("launch_menu")
 local wsl_item_utils_is_available, wsl_item_utils = prequire("launch_menu.wsl_item_utils")
 
--- Fullscreen on startup.
 local mux = wezterm.mux
-wezterm.on("gui-startup", function(cmd)
-  local tab, pane, window = mux.spawn_window(cmd or {})
-  -- If you leave fullscreen, stay maximized. Removed because of komorebi.
-  -- window:gui_window():maximize()
-  window:gui_window():toggle_fullscreen()
-end)
 
 local function tbl_extend(a, b)
     for k, v in pairs(b) do
@@ -81,6 +74,43 @@ end
 local personal_schemes = apply_builtin_scheme_modifications(scheme_modifications)
 
 local config = wezterm.config_builder()
+
+-- [Source][@/SampleCodeCalling]|[Zotero][z@/SampleCodeCalling]
+-- Example:
+-- ```bash
+-- wezterm start -- PowerShell # Follow default processing of args: run PowerShell in new window.
+-- wezterm start -- launch_menu PowerShell # Spawn new window from launch_menu labeled "PowerShell"
+--
+-- [@/SampleCodeCalling]: <https://github.com/wezterm/wezterm/discussions/3836> 'Sample Code for Calling Launcher Menu Item from CLI · Wezterm/Wezterm · Discussion \#3836'
+-- [z@/SampleCodeCalling]: <zotero://select/items/@/SampleCodeCalling> 'Select in Zotero: Sample Code for Calling Launcher Menu Item from CLI · Wezterm/Wezterm · Discussion \#3836'
+wezterm.on("gui-startup", function(cmd)
+  	if not cmd or #(cmd.args) < 2 then
+      return
+    end
+
+    local action_type = string.lower(cmd.args[1])
+
+    if action_type ~= "launch_menu" then
+      return
+    end
+
+    local findName = string.lower(cmd.args[2])
+    for _, menuItem in ipairs(config.launch_menu) do
+        -- wezterm.log_info("Comparing launch first arg of: " .. findName .. " to: " .. string.lower(menuItem.label))
+        if string.lower(menuItem.label) == findName then
+            mux.spawn_window(menuItem)
+        end
+    end
+end)
+
+-- Fullscreen on startup.
+-- wezterm.on("gui-startup", function(cmd)
+--   local tab, pane, window = mux.spawn_window(cmd or {})
+--   -- If you leave fullscreen, stay maximized. Removed because of komorebi.
+--   -- window:gui_window():maximize()
+--   window:gui_window():toggle_fullscreen()
+-- end)
+
 -- OpenGL for GPU acceleration, Software for CPU, WebGl for better
 --   but experimental backends (GPU accelerated includes: use
 --   `wezterm.gui.enumerate_gpus()`)
