@@ -11,7 +11,7 @@ return {
   },
   {
     label = 'PowerShell (Elevated)',
-    args = { 'eledo.exe', 'pwsh.exe', '-NoLogo' },
+    args = { 'gsudo', 'pwsh.exe', '-NoLogo' },
     domain = { DomainName = 'local' },
   },
   {
