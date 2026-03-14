@@ -115,7 +115,12 @@ local function transform_cmd(cmd)
 end
 
 wezterm.on("gui-startup", function(cmd)
-  return start_fullscreen(transform_cmd(cmd))
+  -- On Linux: AwesomeWm manages.
+  -- On Windows: 
+  -- On Darwin: 
+  if utils.is_darwin() then
+    return start_fullscreen(transform_cmd(cmd))
+  end
 end)
 
 -- OpenGL for GPU acceleration, Software for CPU, WebGl for better
